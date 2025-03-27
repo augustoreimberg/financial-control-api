@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+enum EnumUserRole {
+  VIEWER
+  ADVISOR
+  BROKER
+  ADMIN
+}
+
+enum EnumPaymentStatus {
+  PAID
+  PENDING
+  DEFEATED
+}
+
+enum EnumFrequency {
+  MONTHLY
+  ANNUAL
+}
+
+enum EnumPaymentMethod {
+  CREDIT
+  DEBIT
+  BILL
+}
+
+model Policy {
+  id             String             @id @default(uuid())
+  name           String
+  clientId       String
+  advisorId      String
+  brokerId       String
+  productId      String
+  policyNumber   String
+  validity       DateTime
+  frequency      EnumFrequency
+  monthlyPremium Float?
+  annualPremium  Float?
+  paymentMethod  EnumPaymentMethod
+  dueDate        DateTime
+  plot           String
+  paymentStatus  EnumPaymentStatus
+  parentId       String? 
+
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime? @updatedAt
+
+  client    Client  @relation(fields: [clientId], references: [id])
+  advisor   User    @relation("PolicyAdvisor", fields: [advisorId], references: [id])
+  broker    User    @relation("PolicyBroker", fields: [brokerId], references: [id])
+  product   Product @relation(fields: [productId], references: [id])
+  parent    Policy? @relation("PolicyParent", fields: [parentId], references: [id])
+  children  Policy[] @relation("PolicyParent")
+}
+
+model Client {
+  id            String    @id @default(uuid())
+  name          String
+  email         String
+  sinacorCode   String
+  accountNumber String
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
+  deletedAt     DateTime?
+
+  policies      Policy[]
+}
+
+model Product {
+  id        String     @id @default(uuid())
+  name      String
+  parentId  String? 
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  parent    Product?   @relation("ProductParent", fields: [parentId], references: [id])
+  children  Product[]  @relation("ProductParent")
+
+  policies  Policy[]
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique @db.VarChar(255)
+  password  String?
+
+  role      EnumUserRole @default(VIEWER)
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+
+  policiesAsAdvisor Policy[] @relation("PolicyAdvisor")
+  policiesAsBroker  Policy[] @relation("PolicyBroker")
+}

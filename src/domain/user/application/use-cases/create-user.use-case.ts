@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, BadRequestException } from "@nestjs/common";
 import { UserRepository } from "../repositories/user-repository";
 import { EnumUserRole } from "@prisma/client";
 import { User } from "../../enterprise/entities/user.entity";
@@ -14,10 +14,26 @@ export class CreateUserUseCase {
   constructor(private userRepository: UserRepository) {}
 
   async execute({ email, password, role = EnumUserRole.VIEWER }: CreateUserUseCaseRequest) {
-    const user = User.create({ email, password, role });
+    try {
+      if (!email || typeof email !== "string" || !email.includes("@")) {
+        throw new BadRequestException("Invalid email format.");
+      }
 
-    await this.userRepository.create(user);
+      if (password && typeof password !== "string") {
+        throw new BadRequestException("Password must be a string.");
+      }
 
-    return { user };
+      if (role && !Object.values(EnumUserRole).includes(role)) {
+        throw new BadRequestException("Invalid role.");
+      }
+
+      const user = User.create({ email, password, role });
+      await this.userRepository.create(user);
+
+      return { user };
+    } catch (error) {
+      console.error("Error in CreateUserUseCase:", error);
+      throw error;
+    }
   }
 }

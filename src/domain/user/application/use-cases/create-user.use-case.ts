@@ -18,22 +18,28 @@ export class CreateUserUseCase {
       if (!email || typeof email !== "string" || !email.includes("@")) {
         throw new BadRequestException("Invalid email format.");
       }
-
+  
       if (password && typeof password !== "string") {
         throw new BadRequestException("Password must be a string.");
       }
-
+  
       if (role && !Object.values(EnumUserRole).includes(role)) {
         throw new BadRequestException("Invalid role.");
       }
-
+  
+      const existingUser = await this.userRepository.findByEmail(email);
+      if (existingUser) {
+        throw new BadRequestException("Email already in use.");
+      }
+  
       const user = User.create({ email, password, role });
       await this.userRepository.create(user);
-
+  
       return { user };
     } catch (error) {
       console.error("Error in CreateUserUseCase:", error);
       throw error;
     }
   }
+  
 }

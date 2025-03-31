@@ -37,7 +37,6 @@ export class UpdateUserUseCase {
         throw new BadRequestException("Invalid role.");
       }
 
-      // Apenas atualiza os campos fornecidos
       const updateData: Partial<typeof existingUser> = {};
 
       if (email) updateData.email = email;
@@ -46,7 +45,6 @@ export class UpdateUserUseCase {
 
       await this.userRepository.update(id, updateData);
 
-      // Buscar o usuário atualizado
       const updatedUser = await this.userRepository.findById(id);
 
       return { user: updatedUser };

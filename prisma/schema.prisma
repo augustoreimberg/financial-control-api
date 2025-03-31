@@ -32,11 +32,10 @@ enum EnumPaymentMethod {
 }
 
 model Policy {
-  id             String             @id @default(uuid())
+  id             String         @id @default(uuid())
   name           String
   clientId       String
-  advisorId      String
-  brokerId       String
+  responsible    Json
   productId      String
   policyNumber   String
   validity       DateTime
@@ -45,19 +44,29 @@ model Policy {
   annualPremium  Float?
   paymentMethod  EnumPaymentMethod
   dueDate        DateTime
-  plot           String
-  paymentStatus  EnumPaymentStatus
-  parentId       String? 
-
+  
   createdAt      DateTime @default(now())
   updatedAt      DateTime? @updatedAt
 
   client    Client  @relation(fields: [clientId], references: [id])
-  advisor   User    @relation("PolicyAdvisor", fields: [advisorId], references: [id])
-  broker    User    @relation("PolicyBroker", fields: [brokerId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
-  parent    Policy? @relation("PolicyParent", fields: [parentId], references: [id])
-  children  Policy[] @relation("PolicyParent")
+  financial Financial[]
+}
+
+model Financial {
+  id            String           @id @default(uuid())
+  policyId      String
+  plot          String
+  value         Float
+  paymentStatus EnumPaymentStatus
+  parentId      String?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime? @updatedAt
+
+  policy        Policy   @relation(fields: [policyId], references: [id])
+  parent        Financial? @relation("FinancialParent", fields: [parentId], references: [id])
+  children      Financial[] @relation("FinancialParent")
 }
 
 model Client {
@@ -77,7 +86,7 @@ model Client {
 model Product {
   id        String     @id @default(uuid())
   name      String
-  parentId  String? 
+  parentId  String?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
@@ -98,6 +107,4 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
-  policiesAsAdvisor Policy[] @relation("PolicyAdvisor")
-  policiesAsBroker  Policy[] @relation("PolicyBroker")
 }

@@ -50,23 +50,24 @@ model Policy {
 
   client    Client  @relation(fields: [clientId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
-  financial Financial[]
+  payments  Payment[]
 }
 
-model Financial {
+model Payment {
   id            String           @id @default(uuid())
   policyId      String
   plot          String
-  value         Float
+  price         Float
   paymentStatus EnumPaymentStatus
   parentId      String?
-
+  dueDate       DateTime        
+  paymentDate   DateTime?        
   createdAt     DateTime @default(now())
   updatedAt     DateTime? @updatedAt
 
   policy        Policy   @relation(fields: [policyId], references: [id])
-  parent        Financial? @relation("FinancialParent", fields: [parentId], references: [id])
-  children      Financial[] @relation("FinancialParent")
+  parent        Payment? @relation("PaymentParent", fields: [parentId], references: [id])
+  children      Payment[] @relation("PaymentParent")
 }
 
 model Client {
@@ -106,5 +107,5 @@ model User {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
-
 }
+

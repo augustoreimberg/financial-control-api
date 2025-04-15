@@ -1,9 +1,9 @@
-import { Injectable, Inject } from "@nestjs/common";
-import { PrismaService } from "../prisma.service";
-import { UserRepository } from "@/domain/user/application/repositories/user-repository";
-import { PrismaUserMapper } from "../mappers/prisma-user.mapper";
-import { User } from "@/domain/user/enterprise/entities/user.entity";
-import { EnumUserRole } from "@prisma/client";
+import { Injectable, Inject } from '@nestjs/common';
+import { PrismaService } from '../prisma.service';
+import { UserRepository } from '@/domain/user/application/repositories/user-repository';
+import { PrismaUserMapper } from '../mappers/prisma-user.mapper';
+import { User } from '@/domain/user/enterprise/entities/user.entity';
+import { EnumUserRole } from '@prisma/client';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -51,7 +51,7 @@ export class PrismaUserRepository implements UserRepository {
 
   async findAll(): Promise<User[]> {
     const users = await this.prisma.user.findMany({
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
 
     return users.map(PrismaUserMapper.toDomain);
@@ -76,5 +76,32 @@ export class PrismaUserRepository implements UserRepository {
     await this.prisma.user.delete({
       where: { id },
     });
+  }
+
+  async isUserAssignedToClient(
+    userId: string,
+    clientId: string,
+  ): Promise<boolean> {
+    const userClient = await this.prisma.userClient.findUnique({
+      where: {
+        userId_clientId: {
+          userId,
+          clientId,
+        },
+      },
+    });
+
+    return !!userClient;
+  }
+
+  async findByClientId(clientId: string): Promise<User[]> {
+    const userClients = await this.prisma.userClient.findMany({
+      where: { clientId },
+      include: { user: true },
+    });
+
+    return userClients.map((userClient) =>
+      PrismaUserMapper.toDomain(userClient.user),
+    );
   }
 }

@@ -7,9 +7,9 @@ export class FindUsersController {
   constructor(private findUsersUseCase: FindUsersUseCase) {}
 
   @Get()
-  async handler(@Query('id') id?: string, @Query('email') email?: string, @Query('role') role?: EnumUserRole) {
+  async handler(@Query('id') id?: string, @Query('name') name?: string, @Query('email') email?: string, @Query('role') role?: EnumUserRole) {
     try {
-      const response = await this.findUsersUseCase.execute({ id, email, role })
+      const response = await this.findUsersUseCase.execute({ id, name, email, role })
 
       const { user, users } = response
 

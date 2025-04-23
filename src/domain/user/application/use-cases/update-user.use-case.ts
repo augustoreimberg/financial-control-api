@@ -4,6 +4,7 @@ import { EnumUserRole } from "@prisma/client";
 
 interface UpdateUserUseCaseRequest {
   id: string;
+  name?: string;
   email?: string;
   password?: string;
   role?: EnumUserRole;
@@ -13,7 +14,7 @@ interface UpdateUserUseCaseRequest {
 export class UpdateUserUseCase {
     constructor( private userRepository: UserRepository) {}
 
-  async execute({ id, email, password, role }: UpdateUserUseCaseRequest) {
+  async execute({ id, name, email, password, role }: UpdateUserUseCaseRequest) {
     try {
       if (!id || typeof id !== "string") {
         throw new BadRequestException("Invalid user ID.");
@@ -23,6 +24,10 @@ export class UpdateUserUseCase {
 
       if (!existingUser) {
         throw new NotFoundException("User not found.");
+      }
+
+      if (name && typeof name !== "string") {
+        throw new BadRequestException("Name must be a string.");
       }
 
       if (email && (typeof email !== "string" || !email.includes("@"))) {
@@ -39,6 +44,7 @@ export class UpdateUserUseCase {
 
       const updateData: Partial<typeof existingUser> = {};
 
+      if (name) updateData.name = name;
       if (email) updateData.email = email;
       if (password) updateData.password = password;
       if (role) updateData.role = role;

@@ -4,6 +4,7 @@ import { EnumUserRole } from '@prisma/client';
 
 interface FindUsersUseCaseRequest {
   id?: string;
+  name?: string;
   email?: string;
   role?: EnumUserRole;
 }
@@ -12,7 +13,7 @@ interface FindUsersUseCaseRequest {
 export class FindUsersUseCase {
     constructor( private userRepository: UserRepository) {}
 
-  async execute({ id, email, role }: FindUsersUseCaseRequest = {}) {
+  async execute({ id, name, email, role }: FindUsersUseCaseRequest = {}) {
     try {
       if (id) {
         if (typeof id !== 'string') {
@@ -28,6 +29,19 @@ export class FindUsersUseCase {
         return { user };
       }
 
+      if (name) {
+        if (typeof name !== 'string') {
+          throw new BadRequestException('Invalid name format.');
+        }
+
+        const user = await this.userRepository.findByName(name);
+
+        if (!user) {
+          throw new NotFoundException('User not found.');
+        }
+
+        return { user };
+      }
       if (email) {
         if (typeof email !== 'string' || !email.includes('@')) {
           throw new BadRequestException('Invalid email format.');

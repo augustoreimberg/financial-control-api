@@ -4,6 +4,7 @@ import { EnumUserRole } from "@prisma/client";
 import { User } from "../../enterprise/entities/user.entity";
 
 interface CreateUserUseCaseRequest {
+  name?: string;
   email: string;
   password?: string;
   role?: EnumUserRole;
@@ -13,8 +14,12 @@ interface CreateUserUseCaseRequest {
 export class CreateUserUseCase {
   constructor(private userRepository: UserRepository) {}
 
-  async execute({ email, password, role = EnumUserRole.VIEWER }: CreateUserUseCaseRequest) {
+  async execute({ name, email, password, role = EnumUserRole.VIEWER }: CreateUserUseCaseRequest) {
     try {
+      if (name && typeof name !== "string") {
+        throw new BadRequestException("Name must be a string.");
+      }
+
       if (!email || typeof email !== "string" || !email.includes("@")) {
         throw new BadRequestException("Invalid email format.");
       }
@@ -32,7 +37,7 @@ export class CreateUserUseCase {
         throw new BadRequestException("Email already in use.");
       }
   
-      const user = User.create({ email, password, role });
+      const user = User.create({ name, email, password, role });
       await this.userRepository.create(user);
   
       return { user };

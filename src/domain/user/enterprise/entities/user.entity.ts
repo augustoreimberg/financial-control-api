@@ -4,6 +4,7 @@ import { EnumUserRole } from "@prisma/client";
 import { Optional } from "@/core/optional";
 
 interface UserProps {
+  name: string;
   email: string;
   password?: string;
   role?: EnumUserRole;
@@ -12,6 +13,14 @@ interface UserProps {
 }
 
 export class User extends Entity<UserProps> {
+  get name() {
+    return this.props.name
+  }
+  set name(name: string) {
+    this.props.name = name
+    this.touch()
+  }
+
   get email() {
     return this.props.email
   }

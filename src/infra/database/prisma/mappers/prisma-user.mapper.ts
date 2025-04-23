@@ -6,6 +6,7 @@ export class PrismaUserMapper {
   static toDomain(raw: PrismaUser): User {
     return User.create(
       {
+        name: raw.name,
         email: raw.email,
         password: raw.password || '',
         role: raw.role,
@@ -19,6 +20,7 @@ export class PrismaUserMapper {
   static toPrisma(raw: User): Prisma.UserUncheckedCreateInput {
     return {
       id: raw.id.toString(),
+      name: raw.name,
       email: raw.email,
       password: raw.password,
       role: raw.role as EnumUserRole,

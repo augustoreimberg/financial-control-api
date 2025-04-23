@@ -4,6 +4,7 @@ import { EnumUserRole } from '@prisma/client';
 export abstract class UserRepository {
   abstract create(data: User): Promise<void>;
   abstract findById(id: string): Promise<User | null>;
+  abstract findByName(name: string): Promise<User | null>;
   abstract findByEmail(email: string): Promise<User | null>;
   abstract findByRole(role: EnumUserRole): Promise<User[]>;
   abstract findAll(): Promise<User[]>;

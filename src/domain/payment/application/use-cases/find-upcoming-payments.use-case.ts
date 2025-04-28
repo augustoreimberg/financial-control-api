@@ -11,7 +11,7 @@ export class FindUpcomingPaymentsUseCase {
 
   async execute(request: FindUpcomingPaymentsUseCaseRequest = {}) {
     try {
-      const days = request.days || 10 // Default to 10 days if not specified
+      const days = request.days || 10
 
       const payments = await this.paymentRepository.findUpcomingPayments(days)
 

@@ -1,6 +1,778 @@
 # Financial Control API
 
-API para controle financeiro de apólices e pagamentos.
+API para controle financeiro de clientes, produtos e políticas.
+
+## Rotas da API
+
+### Autenticação
+
+#### Login
+
+```http
+POST /auth/login
+```
+
+**Body da Requisição:**
+
+```json
+{
+  "email": "string",
+  "password": "string"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "access_token": "string",
+  "user": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "role": "string"
+  }
+}
+```
+
+### Usuários
+
+#### Criar Usuário
+
+```http
+POST /users
+```
+
+**Body da Requisição:**
+
+```json
+{
+  "name": "string",
+  "email": "string",
+  "password": "string",
+  "role": "VIEWER | ADVISOR | BROKER | ADMIN"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "user": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "role": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+#### Buscar Usuários
+
+```http
+GET /users
+```
+
+**Parâmetros de Query:**
+
+- `id`: string (opcional) - ID do usuário
+- `email`: string (opcional) - Email do usuário
+- `name`: string (opcional) - Nome do usuário
+- `role`: string (opcional) - Role do usuário
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "user": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "role": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+ou
+
+```json
+{
+  "users": [
+    {
+      "id": "string",
+      "name": "string",
+      "email": "string",
+      "role": "string",
+      "createdAt": "string (ISO date)",
+      "updatedAt": "string (ISO date)"
+    }
+  ]
+}
+```
+
+#### Atualizar Usuário
+
+```http
+PUT /users/:id
+```
+
+**Parâmetros de URL:**
+
+- `id`: string - ID do usuário
+
+**Body da Requisição:**
+
+```json
+{
+  "name": "string",
+  "email": "string",
+  "password": "string",
+  "role": "string"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "user": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "role": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+#### Deletar Usuário
+
+```http
+DELETE /users/:id
+```
+
+**Parâmetros de URL:**
+
+- `id`: string - ID do usuário
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "message": "User deleted successfully"
+}
+```
+
+### Clientes
+
+#### Criar Cliente
+
+```http
+POST /clients
+```
+
+**Body da Requisição:**
+
+```json
+{
+  "name": "string",
+  "email": "string",
+  "sinacorCode": "string",
+  "accountNumber": "string"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "client": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "sinacorCode": "string",
+    "accountNumber": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)",
+    "deletedAt": "string (ISO date) | null"
+  }
+}
+```
+
+#### Buscar Clientes
+
+```http
+GET /clients
+```
+
+**Parâmetros de Query:**
+
+- `id`: string (opcional) - ID do cliente
+- `email`: string (opcional) - Email do cliente
+- `sinacorCode`: string (opcional) - Código Sinacor
+- `accountNumber`: string (opcional) - Número da conta
+- `role`: string (opcional) - Role do usuário (ADVISOR ou BROKER)
+- `userId`: string (opcional) - ID do usuário (quando role é informado)
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "client": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "sinacorCode": "string",
+    "accountNumber": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)",
+    "deletedAt": "string (ISO date) | null"
+  }
+}
+```
+
+ou
+
+```json
+{
+  "clients": [
+    {
+      "id": "string",
+      "name": "string",
+      "email": "string",
+      "sinacorCode": "string",
+      "accountNumber": "string",
+      "createdAt": "string (ISO date)",
+      "updatedAt": "string (ISO date)",
+      "deletedAt": "string (ISO date) | null"
+    }
+  ]
+}
+```
+
+#### Atualizar Cliente
+
+```http
+PUT /clients/:id
+```
+
+**Parâmetros de URL:**
+
+- `id`: string - ID do cliente
+
+**Body da Requisição:**
+
+```json
+{
+  "name": "string",
+  "email": "string",
+  "sinacorCode": "string",
+  "accountNumber": "string"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "client": {
+    "id": "string",
+    "name": "string",
+    "email": "string",
+    "sinacorCode": "string",
+    "accountNumber": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)",
+    "deletedAt": "string (ISO date) | null"
+  }
+}
+```
+
+#### Deletar Cliente
+
+```http
+DELETE /clients/:id
+```
+
+**Parâmetros de URL:**
+
+- `id`: string - ID do cliente
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "message": "Client deleted successfully"
+}
+```
+
+### Produtos
+
+#### Criar Produto
+
+```http
+POST /products
+```
+
+**Body da Requisição:**
+
+```json
+{
+  "name": "string"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "product": {
+    "id": "string",
+    "name": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+#### Buscar Produtos
+
+```http
+GET /products
+```
+
+**Parâmetros de Query:**
+
+- `id`: string (opcional) - ID do produto
+- `name`: string (opcional) - Nome do produto
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "product": {
+    "id": "string",
+    "name": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+ou
+
+```json
+{
+  "products": [
+    {
+      "id": "string",
+      "name": "string",
+      "createdAt": "string (ISO date)",
+      "updatedAt": "string (ISO date)"
+    }
+  ]
+}
+```
+
+#### Atualizar Produto
+
+```http
+PUT /products/:id
+```
+
+**Parâmetros de URL:**
+
+- `id`: string - ID do produto
+
+**Body da Requisição:**
+
+```json
+{
+  "name": "string"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "product": {
+    "id": "string",
+    "name": "string",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+#### Deletar Produto
+
+```http
+DELETE /products/:id
+```
+
+**Parâmetros de URL:**
+
+- `id`: string - ID do produto
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "message": "Product deleted successfully"
+}
+```
+
+### Apólices
+
+#### Criar Apólice
+
+```http
+POST /policies
+```
+
+**Body da Requisição:**
+
+```json
+{
+  "name": "string",
+  "clientId": "string",
+  "productId": "string",
+  "policyNumber": "string",
+  "validity": "string (ISO date)",
+  "frequency": "MONTHLY | ANNUAL",
+  "monthlyPremium": "number",
+  "annualPremium": "number",
+  "paymentMethod": "CREDIT | DEBIT | BILL",
+  "dueDate": "string (ISO date)"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "policy": {
+    "id": "string",
+    "name": "string",
+    "clientId": "string",
+    "productId": "string",
+    "policyNumber": "string",
+    "validity": "string (ISO date)",
+    "frequency": "string",
+    "monthlyPremium": "number",
+    "annualPremium": "number",
+    "paymentMethod": "string",
+    "dueDate": "string (ISO date)",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+#### Buscar Apólices
+
+```http
+GET /policies
+```
+
+**Parâmetros de Query:**
+
+- `id`: string (opcional) - ID da apólice
+- `policyNumber`: string (opcional) - Número da apólice
+- `clientId`: string (opcional) - ID do cliente
+- `productId`: string (opcional) - ID do produto
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "policy": {
+    "id": "string",
+    "name": "string",
+    "clientId": "string",
+    "productId": "string",
+    "policyNumber": "string",
+    "validity": "string (ISO date)",
+    "frequency": "string",
+    "monthlyPremium": "number",
+    "annualPremium": "number",
+    "paymentMethod": "string",
+    "dueDate": "string (ISO date)",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+ou
+
+```json
+{
+  "policies": [
+    {
+      "id": "string",
+      "name": "string",
+      "clientId": "string",
+      "productId": "string",
+      "policyNumber": "string",
+      "validity": "string (ISO date)",
+      "frequency": "string",
+      "monthlyPremium": "number",
+      "annualPremium": "number",
+      "paymentMethod": "string",
+      "dueDate": "string (ISO date)",
+      "createdAt": "string (ISO date)",
+      "updatedAt": "string (ISO date)"
+    }
+  ]
+}
+```
+
+#### Atualizar Apólice
+
+```http
+PUT /policies/:id
+```
+
+**Parâmetros de URL:**
+
+- `id`: string - ID da apólice
+
+**Body da Requisição:**
+
+```json
+{
+  "name": "string",
+  "validity": "string (ISO date)",
+  "frequency": "MONTHLY | ANNUAL",
+  "monthlyPremium": "number",
+  "annualPremium": "number",
+  "paymentMethod": "CREDIT | DEBIT | BILL",
+  "dueDate": "string (ISO date)"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "policy": {
+    "id": "string",
+    "name": "string",
+    "clientId": "string",
+    "productId": "string",
+    "policyNumber": "string",
+    "validity": "string (ISO date)",
+    "frequency": "string",
+    "monthlyPremium": "number",
+    "annualPremium": "number",
+    "paymentMethod": "string",
+    "dueDate": "string (ISO date)",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+#### Deletar Apólice
+
+```http
+DELETE /policies/:id
+```
+
+**Parâmetros de URL:**
+
+- `id`: string - ID da apólice
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "message": "Policy deleted successfully"
+}
+```
+
+### Pagamentos
+
+#### Buscar Pagamentos
+
+```http
+GET /payments
+```
+
+**Parâmetros de Query:**
+
+- `id`: string (opcional) - ID do pagamento
+- `policyId`: string (opcional) - ID da apólice
+- `status`: string (opcional) - Status do pagamento (PAID | PENDING | DEFEATED)
+- `month`: number (opcional) - Mês do vencimento
+- `year`: number (opcional) - Ano do vencimento
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "payment": {
+    "id": "string",
+    "policyId": "string",
+    "plot": "string",
+    "price": "number",
+    "paymentStatus": "string",
+    "parentId": "string | null",
+    "dueDate": "string (ISO date)",
+    "paymentDate": "string (ISO date) | null",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+ou
+
+```json
+{
+  "payments": [
+    {
+      "id": "string",
+      "policyId": "string",
+      "plot": "string",
+      "price": "number",
+      "paymentStatus": "string",
+      "parentId": "string | null",
+      "dueDate": "string (ISO date)",
+      "paymentDate": "string (ISO date) | null",
+      "createdAt": "string (ISO date)",
+      "updatedAt": "string (ISO date)"
+    }
+  ]
+}
+```
+
+#### Atualizar Status do Pagamento
+
+```http
+PUT /payments/:id/status
+```
+
+**Parâmetros de URL:**
+
+- `id`: string - ID do pagamento
+
+**Body da Requisição:**
+
+```json
+{
+  "paymentStatus": "PAID | PENDING | DEFEATED",
+  "paymentDate": "string (ISO date)"
+}
+```
+
+**Resposta de Sucesso (200):**
+
+```json
+{
+  "payment": {
+    "id": "string",
+    "policyId": "string",
+    "plot": "string",
+    "price": "number",
+    "paymentStatus": "string",
+    "parentId": "string | null",
+    "dueDate": "string (ISO date)",
+    "paymentDate": "string (ISO date) | null",
+    "createdAt": "string (ISO date)",
+    "updatedAt": "string (ISO date)"
+  }
+}
+```
+
+### Respostas de Erro
+
+Todas as rotas podem retornar os seguintes erros:
+
+**400 Bad Request:**
+
+```json
+{
+  "statusCode": 400,
+  "message": "string",
+  "error": "Bad Request"
+}
+```
+
+**401 Unauthorized:**
+
+```json
+{
+  "statusCode": 401,
+  "message": "string",
+  "error": "Unauthorized"
+}
+```
+
+**404 Not Found:**
+
+```json
+{
+  "statusCode": 404,
+  "message": "string",
+  "error": "Not Found"
+}
+```
+
+**500 Internal Server Error:**
+
+```json
+{
+  "statusCode": 500,
+  "message": "string",
+  "error": "Internal Server Error"
+}
+```
+
+## Exemplos de Uso
+
+### Criar um Cliente
+
+```bash
+curl -X POST http://localhost:3000/clients \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "João Silva",
+    "email": "joao@email.com",
+    "sinacorCode": "123456",
+    "accountNumber": "789012"
+  }'
+```
+
+### Buscar Clientes por Role
+
+```bash
+curl -X GET "http://localhost:3000/clients?role=ADVISOR&userId=123"
+```
+
+### Atualizar um Cliente
+
+```bash
+curl -X PUT http://localhost:3000/clients/123 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "João Silva Atualizado",
+    "email": "joao.novo@email.com"
+  }'
+```
+
+### Deletar um Cliente
+
+```bash
+curl -X DELETE http://localhost:3000/clients/123
+```
 
 ## Estrutura do Projeto
 

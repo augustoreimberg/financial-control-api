@@ -1,5 +1,6 @@
 import { Account } from '../../enterprise/entities/account.entity';
 
+
 export abstract class AccountRepository {
   abstract create(account: Account): Promise<void>;
   abstract findById(id: string): Promise<Account | null>;

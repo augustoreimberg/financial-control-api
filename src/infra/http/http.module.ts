@@ -23,6 +23,7 @@ import { CreateProductController } from './controllers/products/create-product.c
 import { DeleteProductController } from './controllers/products/delete-product.controller';
 import { FindProductController } from './controllers/products/find-product.controller';
 import { UpdateProductController } from './controllers/products/update-product.controller';
+import { CreateAccountController } from './controllers/account/create-account.controller';
 
 import { CreateUserUseCase } from '@/domain/user/application/use-cases/create-user.use-case';
 import { FindUsersUseCase } from '@/domain/user/application/use-cases/find-users.use-case';
@@ -43,8 +44,13 @@ import { CreateProductUseCase } from '@/domain/product/application/use-cases/cre
 import { DeleteProductUseCase } from '@/domain/product/application/use-cases/delete-product.use-case';
 import { FindProductUseCase } from '@/domain/product/application/use-cases/find-product.use-case';
 import { UpdateProductUseCase } from '@/domain/product/application/use-cases/update-product.use-case';
+import { CreateAccountUseCase } from '@/domain/account/application/use-cases/create-account.use-case';
 import { ProductRepository } from '@/domain/product/application/repositories/product-repository';
 import { PrismaProductRepository } from '@/infra/database/prisma/repositories/prisma-product-repository';
+import { AccountRepository } from '@/domain/account/application/repositories/account-repository';
+import { PrismaAccountRepository } from '@/infra/database/prisma/repositories/prisma-account-repository';
+import { UserAccountRepository } from '@/domain/userAccount/application/repositories/userAccount-repository';
+import { PrismaUserAccountRepository } from '@/infra/database/prisma/repositories/prisma-userAccount-repository';
 
 @Module({
   imports: [
@@ -74,6 +80,7 @@ import { PrismaProductRepository } from '@/infra/database/prisma/repositories/pr
     DeleteProductController,
     FindProductController,
     UpdateProductController,
+    CreateAccountController,
   ],
   providers: [
     CreateUserUseCase,
@@ -95,9 +102,18 @@ import { PrismaProductRepository } from '@/infra/database/prisma/repositories/pr
     DeleteProductUseCase,
     FindProductUseCase,
     UpdateProductUseCase,
+    CreateAccountUseCase,
     {
       provide: ProductRepository,
       useClass: PrismaProductRepository,
+    },
+    {
+      provide: AccountRepository,
+      useClass: PrismaAccountRepository,
+    },
+    {
+      provide: UserAccountRepository,
+      useClass: PrismaUserAccountRepository,
     },
     JwtStrategy,
     {

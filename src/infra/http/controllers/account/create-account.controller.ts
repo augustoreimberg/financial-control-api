@@ -1,11 +1,23 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Query,
+  BadRequestException,
+} from '@nestjs/common';
 import { CreateAccountUseCase } from '@/domain/account/application/use-cases/create-account.use-case';
 
 interface CreateAccountBody {
-  name: string;
-  email: string;
-  sinacorCode: string;
-  accountNumber: string;
+  account: {
+    name: string;
+    email: string;
+    sinacorCode: string;
+    accountNumber: string;
+  };
+  users: {
+    advisorId: string;
+    brokerId: string;
+  };
 }
 
 @Controller('accounts')
@@ -14,6 +26,14 @@ export class CreateAccountController {
 
   @Post()
   async handle(@Body() data: CreateAccountBody) {
-    return await this.createAccountUseCase.execute(data);
+    if (!data.users.advisorId || !data.users.brokerId) {
+      throw new BadRequestException('Advisor ID and Broker ID are required');
+    }
+
+    return await this.createAccountUseCase.execute(
+      data.account,
+      data.users.advisorId,
+      data.users.brokerId,
+    );
   }
 }

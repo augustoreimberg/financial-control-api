@@ -31,15 +31,14 @@ export class PrismaUserRepository implements UserRepository {
 
   async findByName(name: string): Promise<User | null> {
     const user = await this.prisma.user.findFirst({
-      where: {name},
+      where: { name },
     });
 
     if (!user) {
       return null;
     }
 
-    return PrismaUserMapper.toDomain(user)
-    
+    return PrismaUserMapper.toDomain(user);
   }
 
   async findByEmail(email: string): Promise<User | null> {
@@ -91,30 +90,30 @@ export class PrismaUserRepository implements UserRepository {
     });
   }
 
-  async isUserAssignedToClient(
+  async isUserAssignedToAccount(
     userId: string,
-    clientId: string,
+    accountId: string,
   ): Promise<boolean> {
-    const userClient = await this.prisma.userClient.findUnique({
+    const userAccount = await this.prisma.userAccount.findUnique({
       where: {
-        userId_clientId: {
+        userId_accountId: {
           userId,
-          clientId,
+          accountId,
         },
       },
     });
 
-    return !!userClient;
+    return !!userAccount;
   }
 
-  async findByClientId(clientId: string): Promise<User[]> {
-    const userClients = await this.prisma.userClient.findMany({
-      where: { clientId },
+  async findByAccountId(accountId: string): Promise<User[]> {
+    const userAccounts = await this.prisma.userAccount.findMany({
+      where: { accountId },
       include: { user: true },
     });
 
-    return userClients.map((userClient) =>
-      PrismaUserMapper.toDomain(userClient.user),
+    return userAccounts.map((userAccount) =>
+      PrismaUserMapper.toDomain(userAccount.user),
     );
   }
 }

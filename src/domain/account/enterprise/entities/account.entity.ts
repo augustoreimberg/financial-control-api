@@ -2,7 +2,7 @@ import { Entity } from '@/core/entities/entity';
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Optional } from '@/core/optional';
 
-interface ClientProps {
+interface AccountProps {
   name: String;
   email: String;
   sinacorCode: String;
@@ -12,7 +12,7 @@ interface ClientProps {
   deletedAt: Date;
 }
 
-export class Client extends Entity<ClientProps> {
+export class Account extends Entity<AccountProps> {
   get name() {
     return this.props.name;
   }
@@ -58,10 +58,10 @@ export class Client extends Entity<ClientProps> {
   }
 
   public static create(
-    props: Optional<ClientProps, 'createdAt'>,
+    props: Optional<AccountProps, 'createdAt'>,
     id?: UniqueEntityID,
   ) {
-    const client = new Client(
+    const account = new Account(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
@@ -69,6 +69,6 @@ export class Client extends Entity<ClientProps> {
       id,
     );
 
-    return client;
+    return account;
   }
 }

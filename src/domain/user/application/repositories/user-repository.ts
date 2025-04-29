@@ -10,9 +10,9 @@ export abstract class UserRepository {
   abstract findAll(): Promise<User[]>;
   abstract update(id: string, data: Partial<User>): Promise<void>;
   abstract delete(id: string): Promise<void>;
-  abstract isUserAssignedToClient(
+  abstract isUserAssignedToAccount(
     userId: string,
-    clientId: string,
+    accountId: string,
   ): Promise<boolean>;
-  abstract findByClientId(clientId: string): Promise<User[]>;
+  abstract findByAccountId(accountId: string): Promise<User[]>;
 }

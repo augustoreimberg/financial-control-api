@@ -52,9 +52,7 @@ export class PrismaPolicyRepository implements PolicyRepository {
     const updateData: any = {};
 
     if (data.name !== undefined) updateData.name = data.name;
-    if (data.clientId !== undefined) updateData.clientId = data.clientId;
-    if (data.responsible !== undefined)
-      updateData.responsible = data.responsible;
+    if (data.accountId !== undefined) updateData.accountId = data.accountId;
     if (data.productId !== undefined) updateData.productId = data.productId;
     if (data.policyNumber !== undefined)
       updateData.policyNumber = data.policyNumber;

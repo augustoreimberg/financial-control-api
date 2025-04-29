@@ -1,14 +1,13 @@
-import { UniqueEntityID } from "@/core/entities/unique-entity-id"
-import { Policy } from "@/domain/policy/enterprise/entities/policy.entity"
-import type { Prisma, Policy as PrismaPolicy } from "@prisma/client"
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import { Policy } from '@/domain/policy/enterprise/entities/policy.entity';
+import type { Prisma, Policy as PrismaPolicy } from '@prisma/client';
 
 export class PrismaPolicyMapper {
   static toDomain(raw: PrismaPolicy): Policy {
     return Policy.create(
       {
         name: raw.name,
-        clientId: raw.clientId,
-        responsible: raw.responsible as any,
+        accountId: raw.accountId,
         productId: raw.productId,
         policyNumber: raw.policyNumber,
         validity: raw.validity,
@@ -21,15 +20,14 @@ export class PrismaPolicyMapper {
         updatedAt: raw.updatedAt || undefined,
       },
       new UniqueEntityID(raw.id),
-    )
+    );
   }
 
   static toPrisma(raw: Policy): Prisma.PolicyUncheckedCreateInput {
     return {
       id: raw.id.toString(),
       name: raw.name,
-      clientId: raw.clientId,
-      responsible: raw.responsible as any,
+      accountId: raw.accountId,
       productId: raw.productId,
       policyNumber: raw.policyNumber,
       validity: raw.validity,
@@ -40,7 +38,6 @@ export class PrismaPolicyMapper {
       dueDate: raw.dueDate,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt || null,
-    }
+    };
   }
 }
-

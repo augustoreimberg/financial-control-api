@@ -1,6 +1,6 @@
-import { UniqueEntityID } from "@/core/entities/unique-entity-id"
-import { Payment } from "@/domain/payment/enterprise/entities/payment.entity"
-import type { Prisma, Payment as PrismaPayment } from "@prisma/client"
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import { Payment } from '@/domain/payment/enterprise/entities/payment.entity';
+import type { Prisma, Payment as PrismaPayment } from '@prisma/client';
 
 export class PrismaPaymentMapper {
   static toDomain(raw: PrismaPayment): Payment {
@@ -17,7 +17,7 @@ export class PrismaPaymentMapper {
         updatedAt: raw.updatedAt || undefined,
       },
       new UniqueEntityID(raw.id),
-    )
+    );
   }
 
   static toPrisma(raw: Payment): Prisma.PaymentUncheckedCreateInput {
@@ -32,7 +32,6 @@ export class PrismaPaymentMapper {
       paymentDate: raw.paymentDate || null,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt || null,
-    }
+    };
   }
 }
-

@@ -34,8 +34,7 @@ enum EnumPaymentMethod {
 model Policy {
   id             String         @id @default(uuid())
   name           String
-  clientId       String
-  responsible    Json
+  accountId      String
   productId      String
   policyNumber   String         @unique
   validity       DateTime
@@ -48,7 +47,7 @@ model Policy {
   createdAt      DateTime @default(now())
   updatedAt      DateTime? @updatedAt
 
-  client    Client  @relation(fields: [clientId], references: [id])
+  account   Account  @relation(fields: [accountId], references: [id])
   product   Product @relation(fields: [productId], references: [id])
   payments  Payment[]
 }
@@ -70,7 +69,7 @@ model Payment {
   children      Payment[] @relation("PaymentParent")
 }
 
-model Client {
+model Account {
   id            String    @id @default(uuid())
   name          String
   email         String
@@ -82,7 +81,7 @@ model Client {
   deletedAt     DateTime?
 
   policies      Policy[]
-  users         UserClient[]
+  users         UserAccount[]
 }
 
 model Product {
@@ -105,18 +104,18 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime? @updatedAt
 
-  clients   UserClient[]
+  accounts   UserAccount[]
 }
 
-model UserClient {
+model UserAccount {
   id        String   @id @default(uuid())
   userId    String
-  clientId  String
+  accountId  String
   createdAt DateTime @default(now())
   updatedAt DateTime? @updatedAt
 
   user      User    @relation(fields: [userId], references: [id])
-  client    Client  @relation(fields: [clientId], references: [id])
+  account   Account  @relation(fields: [accountId], references: [id])
 
-  @@unique([userId, clientId])
+  @@unique([userId, accountId])
 }

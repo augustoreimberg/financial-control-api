@@ -1,22 +1,17 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { PolicyRepository } from '../repositories/policy-repository';
 import { PaymentRepository } from '@/domain/payment/application/repositories/payment-repository';
-import {
-  Policy,
-  type ResponsibleData,
-} from '../../enterprise/entities/policy.entity';
+import { Policy } from '../../enterprise/entities/policy.entity';
 import { Payment } from '@/domain/payment/enterprise/entities/payment.entity';
 import {
   EnumFrequency,
   type EnumPaymentMethod,
   EnumPaymentStatus,
-  EnumUserRole,
 } from '@prisma/client';
-import { UserRepository } from '@/domain/user/application/repositories/user-repository';
 
 interface CreatePolicyUseCaseRequest {
   name: string;
-  clientId: string;
+  accountId: string;
   productId: string;
   policyNumber: string;
   validity: Date;
@@ -32,7 +27,6 @@ export class CreatePolicyUseCase {
   constructor(
     private policyRepository: PolicyRepository,
     private paymentRepository: PaymentRepository,
-    private userRepository: UserRepository,
   ) {}
 
   async execute(request: CreatePolicyUseCaseRequest) {
@@ -42,8 +36,8 @@ export class CreatePolicyUseCase {
         throw new BadRequestException('Policy name is required');
       }
 
-      if (!request.clientId) {
-        throw new BadRequestException('Client ID is required');
+      if (!request.accountId) {
+        throw new BadRequestException('Account ID is required');
       }
 
       if (!request.productId) {
@@ -62,26 +56,10 @@ export class CreatePolicyUseCase {
         throw new BadRequestException('Due date is required');
       }
 
-      // Find advisor and broker assigned to the client
-      const users = await this.userRepository.findByClientId(request.clientId);
-
-      const advisor = users.find((user) => user.role === EnumUserRole.ADVISOR);
-      const broker = users.find((user) => user.role === EnumUserRole.BROKER);
-
-      if (!advisor) {
-        throw new BadRequestException('No advisor assigned to this client');
+      if (request.dueDate > request.validity) {
+        throw new BadRequestException('Due date cannot be after validity date');
       }
 
-      if (!broker) {
-        throw new BadRequestException('No broker assigned to this client');
-      }
-
-      const responsible: ResponsibleData = {
-        advisor: advisor.id.toString(),
-        broker: broker.id.toString(),
-      };
-
-      // Validate frequency-specific premium
       if (
         request.frequency === EnumFrequency.MONTHLY &&
         !request.monthlyPremium
@@ -100,11 +78,9 @@ export class CreatePolicyUseCase {
         );
       }
 
-      // Create policy
       const policy = Policy.create({
         name: request.name,
-        clientId: request.clientId,
-        responsible,
+        accountId: request.accountId,
         productId: request.productId,
         policyNumber: request.policyNumber,
         validity: request.validity,
@@ -117,36 +93,38 @@ export class CreatePolicyUseCase {
 
       await this.policyRepository.create(policy);
 
-      // Create payments based on frequency
       const payments: Payment[] = [];
 
       if (request.frequency === EnumFrequency.MONTHLY) {
-        // Create 12 monthly payments
         const monthlyAmount = request.monthlyPremium;
 
-        // Calculate last payment date
-        const lastPaymentDate = new Date(request.dueDate);
-        lastPaymentDate.setMonth(lastPaymentDate.getMonth() + 11);
+        // Calculate the number of months between dueDate and validity
+        const startDate = new Date(request.dueDate);
+        const endDate = new Date(request.validity);
+        const monthsDiff =
+          (endDate.getFullYear() - startDate.getFullYear()) * 12 +
+          (endDate.getMonth() - startDate.getMonth());
+        const totalMonths = Math.max(1, monthsDiff); // Ensure at least 1 month
 
-        // Create parent payment
+        // Create parent payment with total amount
         const parentPayment = Payment.create({
           policyId: policy.id.toString(),
           plot: 'Full',
-          price: monthlyAmount * 12,
+          price: monthlyAmount * totalMonths,
           paymentStatus: EnumPaymentStatus.PENDING,
-          dueDate: lastPaymentDate,
+          dueDate: endDate,
         });
 
         await this.paymentRepository.create(parentPayment);
 
-        // Create 12 child payments
-        for (let i = 1; i <= 12; i++) {
+        // Create monthly payments
+        for (let i = 1; i <= totalMonths; i++) {
           const paymentDueDate = new Date(request.dueDate);
           paymentDueDate.setMonth(paymentDueDate.getMonth() + i - 1);
 
           const payment = Payment.create({
             policyId: policy.id.toString(),
-            plot: `${i}/12`,
+            plot: `${i}/${totalMonths}`,
             price: monthlyAmount,
             paymentStatus: EnumPaymentStatus.PENDING,
             parentId: parentPayment.id.toString(),
@@ -156,7 +134,6 @@ export class CreatePolicyUseCase {
           payments.push(payment);
         }
       } else if (request.frequency === EnumFrequency.ANNUAL) {
-        // Create a single annual payment
         const payment = Payment.create({
           policyId: policy.id.toString(),
           plot: '1/1',

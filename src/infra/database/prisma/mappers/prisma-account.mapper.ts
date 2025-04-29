@@ -1,10 +1,10 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
-import { Client } from '@/domain/client/enterprise/entities/client.entity';
-import { Prisma, Client as PrismaClient } from '@prisma/client';
+import { Account } from '@/domain/account/enterprise/entities/account.entity';
+import { Prisma, Account as PrismaAccount } from '@prisma/client';
 
-export class PrismaClientMapper {
-  static toDomain(raw: PrismaClient): Client {
-    return Client.create(
+export class PrismaAccountMapper {
+  static toDomain(raw: PrismaAccount): Account {
+    return Account.create(
       {
         name: raw.name,
         email: raw.email,
@@ -18,7 +18,7 @@ export class PrismaClientMapper {
     );
   }
 
-  static toPrisma(raw: Client): Prisma.ClientUncheckedCreateInput {
+  static toPrisma(raw: Account): Prisma.AccountUncheckedCreateInput {
     return {
       id: raw.id.toString(),
       name: raw.name.toString(),

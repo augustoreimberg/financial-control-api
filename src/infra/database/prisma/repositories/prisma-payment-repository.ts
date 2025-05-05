@@ -107,14 +107,10 @@ export class PrismaPaymentRepository implements PaymentRepository {
   }
 
   async findOverduePayments(): Promise<Payment[]> {
-    const today = new Date();
 
     const payments = await this.prisma.payment.findMany({
       where: {
-        dueDate: {
-          lt: today,
-        },
-        paymentStatus: EnumPaymentStatus.PENDING,
+        paymentStatus: EnumPaymentStatus.DEFEATED,
       },
       orderBy: { dueDate: 'asc' },
     });
@@ -140,6 +136,16 @@ export class PrismaPaymentRepository implements PaymentRepository {
 
     return result.count;
   }
+
+  async countAll(): Promise<number> {
+    return this.prisma.payment.count();
+  }
+  
+  async countByStatus(status: EnumPaymentStatus): Promise<number> {
+    return this.prisma.payment.count({
+      where: { paymentStatus: status },
+    });
+  }  
 
   async findByDueDateMonthAndYear(
     month: number,

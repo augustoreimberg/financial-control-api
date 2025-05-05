@@ -24,6 +24,8 @@ import { DeleteProductController } from './controllers/products/delete-product.c
 import { FindProductController } from './controllers/products/find-product.controller';
 import { UpdateProductController } from './controllers/products/update-product.controller';
 import { CreateAccountController } from './controllers/account/create-account.controller';
+import { FindAccountsController } from './controllers/account/find-account.controller';
+import { GetPaymentsMetricsController } from './controllers/payment/find-payments-metrics.controller';
 
 import { CreateUserUseCase } from '@/domain/user/application/use-cases/create-user.use-case';
 import { FindUsersUseCase } from '@/domain/user/application/use-cases/find-users.use-case';
@@ -51,6 +53,12 @@ import { AccountRepository } from '@/domain/account/application/repositories/acc
 import { PrismaAccountRepository } from '@/infra/database/prisma/repositories/prisma-account-repository';
 import { UserAccountRepository } from '@/domain/userAccount/application/repositories/userAccount-repository';
 import { PrismaUserAccountRepository } from '@/infra/database/prisma/repositories/prisma-userAccount-repository';
+import { FindAccountsUseCase } from '@/domain/account/application/use-cases/find-accounts.use-case';
+import { GetPaymentsMetricsUseCase } from '@/domain/payment/application/use-cases/find-payments-metrics.use-case';
+import { PaymentRepository } from '@/domain/payment/application/repositories/payment-repository';
+import { PrismaPaymentRepository } from '../database/prisma/repositories/prisma-payment-repository';
+import { PolicyRepository } from '@/domain/policy/application/repositories/policy-repository';
+import { PrismaPolicyRepository } from '../database/prisma/repositories/prisma-policy-repository';
 
 @Module({
   imports: [
@@ -81,6 +89,8 @@ import { PrismaUserAccountRepository } from '@/infra/database/prisma/repositorie
     FindProductController,
     UpdateProductController,
     CreateAccountController,
+    FindAccountsController,
+    GetPaymentsMetricsController,
   ],
   providers: [
     CreateUserUseCase,
@@ -103,6 +113,8 @@ import { PrismaUserAccountRepository } from '@/infra/database/prisma/repositorie
     FindProductUseCase,
     UpdateProductUseCase,
     CreateAccountUseCase,
+    FindAccountsUseCase,
+    GetPaymentsMetricsUseCase,
     {
       provide: ProductRepository,
       useClass: PrismaProductRepository,
@@ -114,6 +126,14 @@ import { PrismaUserAccountRepository } from '@/infra/database/prisma/repositorie
     {
       provide: UserAccountRepository,
       useClass: PrismaUserAccountRepository,
+    },
+    {
+      provide: PaymentRepository,
+      useClass: PrismaPaymentRepository,
+    },
+    {
+      provide: PolicyRepository,
+      useClass: PrismaPolicyRepository,
     },
     JwtStrategy,
     {

@@ -4,7 +4,11 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PaymentRepository } from '../repositories/payment-repository';
+import { PolicyRepository } from '@/domain/policy/application/repositories/policy-repository';
+import { AccountRepository } from '@/domain/account/application/repositories/account-repository';
+import { ProductRepository } from '@/domain/product/application/repositories/product-repository';
 import { EnumPaymentStatus } from '@prisma/client';
+import { PaymentWithPolicyInfo } from '../dtos/payment-with-policy-info.dto';
 
 interface FindPaymentUseCaseRequest {
   id?: string;
@@ -14,9 +18,18 @@ interface FindPaymentUseCaseRequest {
   dueDateYear?: number;
 }
 
+interface FindPaymentUseCaseResponse {
+  payments: PaymentWithPolicyInfo[];
+}
+
 @Injectable()
 export class FindPaymentUseCase {
-  constructor(private paymentRepository: PaymentRepository) {}
+  constructor(
+    private paymentRepository: PaymentRepository,
+    private policyRepository: PolicyRepository,
+    private accountRepository: AccountRepository,
+    private productRepository: ProductRepository,
+  ) {}
 
   private validateRequest(request: FindPaymentUseCaseRequest) {
     if (request.dueDateMonth || request.dueDateYear) {
@@ -51,7 +64,41 @@ export class FindPaymentUseCase {
     }
   }
 
-  async execute(request: FindPaymentUseCaseRequest = {}) {
+  private async mapPaymentToResponse(
+    payment: any,
+    policy: any,
+  ): Promise<PaymentWithPolicyInfo> {
+    const account = await this.accountRepository.findById(policy.accountId);
+    if (!account) {
+      throw new NotFoundException(`Account not found for policy ${policy.id}`);
+    }
+
+    const product = await this.productRepository.findById(policy.productId);
+    if (!product) {
+      throw new NotFoundException(`Product not found for policy ${policy.id}`);
+    }
+
+    return {
+      id: payment._id.value,
+      policyId: payment.props.policyId,
+      accountId: policy.accountId,
+      accountName: account.name,
+      productId: policy.productId,
+      productName: product.name,
+      plot: payment.props.plot,
+      price: payment.props.price,
+      paymentStatus: payment.props.paymentStatus,
+      parentId: payment.props.parentId,
+      dueDate: payment.props.dueDate,
+      paymentDate: payment.props.paymentDate,
+      createdAt: payment.props.createdAt,
+      updatedAt: payment.props.updatedAt,
+    };
+  }
+
+  async execute(
+    request: FindPaymentUseCaseRequest = {},
+  ): Promise<FindPaymentUseCaseResponse> {
     try {
       this.validateRequest(request);
 
@@ -82,19 +129,38 @@ export class FindPaymentUseCase {
       const updatedPayments = await Promise.all(
         payments.map(async (payment) => {
           if (
-            payment.paymentStatus === EnumPaymentStatus.PENDING &&
-            payment.dueDate < today
+            payment.props.paymentStatus === EnumPaymentStatus.PENDING &&
+            payment.props.dueDate < today
           ) {
-            payment.paymentStatus = EnumPaymentStatus.DEFEATED;
-            await this.paymentRepository.update(payment.id.toString(), payment);
+            payment.props.paymentStatus = EnumPaymentStatus.DEFEATED;
+            await this.paymentRepository.update(payment._id.value, payment);
           }
           return payment;
         }),
       );
 
-      return { payments: updatedPayments };
+      const paymentsWithPolicyInfo = await Promise.all(
+        updatedPayments.map(async (payment) => {
+          const policy = await this.policyRepository.findById(
+            payment.props.policyId,
+          );
+
+          if (!policy) {
+            throw new NotFoundException(
+              `Policy not found for payment ${payment._id.value}`,
+            );
+          }
+
+          return this.mapPaymentToResponse(payment, policy);
+        }),
+      );
+
+      return { payments: paymentsWithPolicyInfo };
     } catch (error) {
-      if (error instanceof BadRequestException) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
         throw error;
       }
       console.error('Error in FindPaymentUseCase:', error);

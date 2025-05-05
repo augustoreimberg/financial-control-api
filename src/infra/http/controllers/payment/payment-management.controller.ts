@@ -6,7 +6,7 @@ import { MarkPaymentAsPaidUseCase } from "@/domain/payment/application/use-cases
 import { ApiTags } from "@nestjs/swagger"
 
 @ApiTags("Payment Management")
-@Controller("payments")
+@Controller("payment")
 export class PaymentManagementController {
   constructor(
     private findUpcomingPaymentsUseCase: FindUpcomingPaymentsUseCase,

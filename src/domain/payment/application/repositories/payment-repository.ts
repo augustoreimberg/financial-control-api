@@ -14,9 +14,9 @@ export abstract class PaymentRepository {
   abstract findAll(): Promise<Payment[]>;
   abstract update(id: string, data: Partial<Payment>): Promise<void>;
   abstract delete(id: string): Promise<void>;
-
-  // New methods
   abstract findUpcomingPayments(days: number): Promise<Payment[]>;
   abstract findOverduePayments(): Promise<Payment[]>;
-  abstract updateOverduePaymentsStatus(): Promise<number>; // Returns count of updated payments
+  abstract updateOverduePaymentsStatus(): Promise<number>;
+  abstract countAll(): Promise<number>;
+  abstract countByStatus(status: EnumPaymentStatus): Promise<number>;
 }

@@ -81,8 +81,9 @@ export class FindPaymentUseCase {
     return {
       id: payment._id.value,
       policyId: payment.props.policyId,
+      policyNumber: policy.policyNumber,
       accountId: policy.accountId,
-      accountName: account.name,
+      accountName: account.name.toString(),
       productId: policy.productId,
       productName: product.name,
       plot: payment.props.plot,

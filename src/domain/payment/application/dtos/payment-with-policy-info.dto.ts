@@ -3,6 +3,7 @@ import { EnumPaymentStatus } from '@prisma/client';
 export interface PaymentWithPolicyInfo {
   id: string;
   policyId: string;
+  policyNumber: string;
   accountId: string;
   accountName: string;
   productId: string;

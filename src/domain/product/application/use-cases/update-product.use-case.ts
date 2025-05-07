@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { ProductRepository } from '../repositories/product-repository';
-import { Product } from '../../enterprise/entities/product.entity';
 
 interface UpdateProductUseCaseRequest {
   id: string;
@@ -16,8 +15,8 @@ export class UpdateProductUseCase {
   constructor(private productRepository: ProductRepository) {}
 
   private validateRequest(request: UpdateProductUseCaseRequest) {
-    if (!request.id.match(/^[0-9a-fA-F]{24}$/)) {
-      throw new BadRequestException('ID do produto inválido');
+    if (!request.id) {
+      throw new BadRequestException('ID do produto necessário');
     }
   }
 

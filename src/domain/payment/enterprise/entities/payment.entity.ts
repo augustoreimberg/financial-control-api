@@ -9,8 +9,8 @@ interface PaymentProps {
   price: number
   paymentStatus: EnumPaymentStatus
   parentId?: string
-  dueDate: Date // Added field for payment due date
-  paymentDate?: Date // Added field for when payment was actually made
+  dueDate: Date
+  paymentDate?: Date
   createdAt: Date
   updatedAt?: Date
 }

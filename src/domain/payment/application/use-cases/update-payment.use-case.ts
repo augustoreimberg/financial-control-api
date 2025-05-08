@@ -6,6 +6,7 @@ interface UpdatePaymentUseCaseRequest {
   id: string
   paymentStatus?: EnumPaymentStatus
   price?: number
+  paymentDate?: Date
 }
 
 @Injectable()
@@ -28,6 +29,9 @@ export class UpdatePaymentUseCase {
 
       if (request.paymentStatus !== undefined) updateData.paymentStatus = request.paymentStatus
       if (request.price !== undefined) updateData.price = request.price
+      if (request.paymentDate !== undefined) {
+        updateData.paymentDate = request.paymentDate;
+      }
 
       await this.paymentRepository.update(request.id, updateData)
 

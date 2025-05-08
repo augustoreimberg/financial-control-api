@@ -6,6 +6,7 @@ import { ApiTags } from "@nestjs/swagger"
 interface UpdatePaymentBody {
   paymentStatus?: EnumPaymentStatus
   price?: number
+  paymentDate?: Date
 }
 
 @ApiTags("Payments")

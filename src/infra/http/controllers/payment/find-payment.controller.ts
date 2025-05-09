@@ -2,7 +2,7 @@ import { Controller, Get, Param, Query } from '@nestjs/common';
 import { FindPaymentUseCase } from '@/domain/payment/application/use-cases/find-payment.use-case';
 import { EnumPaymentStatus } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
-import { PaymentWithPolicyInfo } from '@/domain/payment/application/repositories/payment-with-policy-info.dto';
+import { PaymentWithPolicyInfo } from '@/domain/payment/application/repositories/payment-with-policy-info';
 
 interface FindPaymentResponse {
   payments: PaymentWithPolicyInfo[];

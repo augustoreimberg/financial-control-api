@@ -8,7 +8,7 @@ import { PolicyRepository } from '@/domain/policy/application/repositories/polic
 import { AccountRepository } from '@/domain/account/application/repositories/account-repository';
 import { ProductRepository } from '@/domain/product/application/repositories/product-repository';
 import { EnumPaymentStatus } from '@prisma/client';
-import { PaymentWithPolicyInfo } from '../repositories/payment-with-policy-info.dto';
+import { PaymentWithPolicyInfo } from '../repositories/payment-with-policy-info';
 
 interface FindPaymentUseCaseRequest {
   id?: string;

@@ -1,6 +1,6 @@
-import { UniqueEntityID } from '@/core/entities/unique-entity-id'
-import { User } from '@/domain/user/enterprise/entities/user.entity'
-import { Prisma, User as PrismaUser, EnumUserRole } from '@prisma/client'
+import { UniqueEntityID } from '@/core/entities/unique-entity-id';
+import { User } from '@/domain/user/enterprise/entities/user.entity';
+import { Prisma, User as PrismaUser, EnumUserRole } from '@prisma/client';
 
 export class PrismaUserMapper {
   static toDomain(raw: PrismaUser): User {
@@ -14,7 +14,7 @@ export class PrismaUserMapper {
         updatedAt: raw.updatedAt || null,
       },
       new UniqueEntityID(raw.id),
-    )
+    );
   }
 
   static toPrisma(raw: User): Prisma.UserUncheckedCreateInput {
@@ -26,6 +26,18 @@ export class PrismaUserMapper {
       role: raw.role as EnumUserRole,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt || null,
-    }
+    };
+  }
+
+  static toHTTP(user: User) {
+    return {
+        id: user.id.toString(),
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        role: user.role,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+    };
   }
 }

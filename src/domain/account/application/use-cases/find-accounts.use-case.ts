@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { AccountRepository } from '../repositories/account-repository';
 import { EnumUserRole } from '@prisma/client';
+import { PrismaAccountMapper } from '@/infra/database/prisma/mappers/prisma-account.mapper';
 
 interface FindAccountsUseCaseRequest {
   id?: string;
@@ -32,7 +33,7 @@ export class FindAccountsUseCase {
         if (!account) {
           throw new BadRequestException('Account not found.');
         }
-        return { account };
+        return { account: PrismaAccountMapper.toHTTP(account) };
       }
 
       if (email) {
@@ -43,7 +44,7 @@ export class FindAccountsUseCase {
         if (!account) {
           throw new BadRequestException('Account not found.');
         }
-        return { account };
+        return { account: PrismaAccountMapper.toHTTP(account) };
       }
 
       if (sinacorCode) {
@@ -55,7 +56,7 @@ export class FindAccountsUseCase {
         if (!account) {
           throw new BadRequestException('Account not found.');
         }
-        return { account };
+        return { account: PrismaAccountMapper.toHTTP(account) };
       }
 
       if (accountNumber) {
@@ -67,7 +68,7 @@ export class FindAccountsUseCase {
         if (!account) {
           throw new BadRequestException('Account not found.');
         }
-        return { account };
+        return { account: PrismaAccountMapper.toHTTP(account) };
       }
 
       if (role && userId) {
@@ -88,11 +89,19 @@ export class FindAccountsUseCase {
           throw new BadRequestException('No accounts found for this user');
         }
 
-        return { accounts };
+        return {
+          accounts: accounts.map((account) =>
+            PrismaAccountMapper.toHTTP(account),
+          ),
+        };
       }
 
       const accounts = await this.accountRepository.findAll();
-      return { accounts };
+      return {
+        accounts: accounts.map((account) =>
+          PrismaAccountMapper.toHTTP(account),
+        ),
+      };
     } catch (error) {
       console.error('Error in FindAccountsUseCase:', error);
       throw error;

@@ -10,6 +10,7 @@ interface AccountProps {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
+  users?: any[];
 }
 
 export class Account extends Entity<AccountProps> {
@@ -53,18 +54,29 @@ export class Account extends Entity<AccountProps> {
     return this.props.updatedAt;
   }
 
+  get deletedAt() {
+    return this.props.deletedAt;
+  }
+
+  get users() {
+    return this.props.users;
+  }
+
   private touch() {
     this.props.updatedAt = new Date();
   }
 
   public static create(
-    props: Optional<AccountProps, 'createdAt'>,
+    props: Optional<AccountProps, 'createdAt' | 'updatedAt' | 'deletedAt' | 'users'>,
     id?: UniqueEntityID,
   ) {
     const account = new Account(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
+        updatedAt: props.updatedAt ?? new Date(),
+        deletedAt: props.deletedAt ?? null,
+        users: props.users ?? [],
       },
       id,
     );

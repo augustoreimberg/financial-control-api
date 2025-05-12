@@ -19,6 +19,13 @@ export class PrismaAccountRepository implements AccountRepository {
   async findById(id: string): Promise<Account | null> {
     const account = await this.prisma.account.findUnique({
       where: { id },
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
 
     if (!account) {
@@ -31,6 +38,13 @@ export class PrismaAccountRepository implements AccountRepository {
   async findByEmail(email: string): Promise<Account | null> {
     const account = await this.prisma.account.findFirst({
       where: { email },
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
 
     if (!account) {
@@ -43,6 +57,13 @@ export class PrismaAccountRepository implements AccountRepository {
   async findBySinacorCode(sinacorCode: string): Promise<Account | null> {
     const account = await this.prisma.account.findFirst({
       where: { sinacorCode },
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
 
     if (!account) {
@@ -55,6 +76,13 @@ export class PrismaAccountRepository implements AccountRepository {
   async findByAccountNumber(accountNumber: string): Promise<Account | null> {
     const account = await this.prisma.account.findFirst({
       where: { accountNumber },
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
+      },
     });
 
     if (!account) {
@@ -73,7 +101,15 @@ export class PrismaAccountRepository implements AccountRepository {
         },
       },
       include: {
-        account: true,
+        account: {
+          include: {
+            users: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -95,7 +131,15 @@ export class PrismaAccountRepository implements AccountRepository {
         },
       },
       include: {
-        account: true,
+        account: {
+          include: {
+            users: {
+              include: {
+                user: true,
+              },
+            },
+          },
+        },
       },
     });
 
@@ -112,6 +156,13 @@ export class PrismaAccountRepository implements AccountRepository {
     const accounts = await this.prisma.account.findMany({
       where: {
         deletedAt: null,
+      },
+      include: {
+        users: {
+          include: {
+            user: true,
+          },
+        },
       },
     });
 

@@ -26,6 +26,7 @@ import { UpdateProductController } from './controllers/products/update-product.c
 import { CreateAccountController } from './controllers/account/create-account.controller';
 import { FindAccountsController } from './controllers/account/find-account.controller';
 import { GetPaymentsMetricsController } from './controllers/payment/find-payments-metrics.controller';
+import { UpdateAccountController } from './controllers/account/update-account.controller';
 
 import { CreateUserUseCase } from '@/domain/user/application/use-cases/create-user.use-case';
 import { FindUsersUseCase } from '@/domain/user/application/use-cases/find-users.use-case';
@@ -59,6 +60,7 @@ import { PaymentRepository } from '@/domain/payment/application/repositories/pay
 import { PrismaPaymentRepository } from '../database/prisma/repositories/prisma-payment-repository';
 import { PolicyRepository } from '@/domain/policy/application/repositories/policy-repository';
 import { PrismaPolicyRepository } from '../database/prisma/repositories/prisma-policy-repository';
+import { UpdateAccountUseCase } from '@/domain/account/application/use-cases/update-account.use-case';
 
 @Module({
   imports: [
@@ -91,6 +93,7 @@ import { PrismaPolicyRepository } from '../database/prisma/repositories/prisma-p
     CreateAccountController,
     FindAccountsController,
     GetPaymentsMetricsController,
+    UpdateAccountController,
   ],
   providers: [
     CreateUserUseCase,
@@ -115,6 +118,7 @@ import { PrismaPolicyRepository } from '../database/prisma/repositories/prisma-p
     CreateAccountUseCase,
     FindAccountsUseCase,
     GetPaymentsMetricsUseCase,
+    UpdateAccountUseCase,
     {
       provide: ProductRepository,
       useClass: PrismaProductRepository,

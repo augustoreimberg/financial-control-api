@@ -14,6 +14,7 @@ interface CreatePolicyBody {
   annualPremium?: number;
   paymentMethod: EnumPaymentMethod;
   dueDate: Date;
+  paymentDay?: number;
 }
 
 @ApiTags('Policies')

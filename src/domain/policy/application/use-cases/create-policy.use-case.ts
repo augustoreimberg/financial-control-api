@@ -20,6 +20,7 @@ interface CreatePolicyUseCaseRequest {
   annualPremium?: number;
   paymentMethod: EnumPaymentMethod;
   dueDate: Date;
+  paymentDay?: number;
 }
 
 @Injectable()
@@ -31,7 +32,6 @@ export class CreatePolicyUseCase {
 
   async execute(request: CreatePolicyUseCaseRequest) {
     try {
-      // Validate required fields
       if (!request.name) {
         throw new BadRequestException('Policy name is required');
       }
@@ -58,6 +58,13 @@ export class CreatePolicyUseCase {
 
       if (request.dueDate > request.validity) {
         throw new BadRequestException('Due date cannot be after validity date');
+      }
+
+      if (
+        request.paymentDay &&
+        (request.paymentDay < 1 || request.paymentDay > 31)
+      ) {
+        throw new BadRequestException('Payment day must be between 1 and 31');
       }
 
       if (
@@ -98,15 +105,13 @@ export class CreatePolicyUseCase {
       if (request.frequency === EnumFrequency.MONTHLY) {
         const monthlyAmount = request.monthlyPremium;
 
-        // Calculate the number of months between dueDate and validity
         const startDate = new Date(request.dueDate);
         const endDate = new Date(request.validity);
         const monthsDiff =
           (endDate.getFullYear() - startDate.getFullYear()) * 12 +
           (endDate.getMonth() - startDate.getMonth());
-        const totalMonths = Math.max(1, monthsDiff); // Ensure at least 1 month
+        const totalMonths = Math.max(1, monthsDiff);
 
-        // Create parent payment with total amount
         const parentPayment = Payment.create({
           policyId: policy.id.toString(),
           plot: 'Full',
@@ -117,10 +122,13 @@ export class CreatePolicyUseCase {
 
         await this.paymentRepository.create(parentPayment);
 
-        // Create monthly payments
         for (let i = 1; i <= totalMonths; i++) {
           const paymentDueDate = new Date(request.dueDate);
           paymentDueDate.setMonth(paymentDueDate.getMonth() + i - 1);
+
+          if (request.paymentDay) {
+            paymentDueDate.setDate(request.paymentDay);
+          }
 
           const payment = Payment.create({
             policyId: policy.id.toString(),
@@ -134,12 +142,18 @@ export class CreatePolicyUseCase {
           payments.push(payment);
         }
       } else if (request.frequency === EnumFrequency.ANNUAL) {
+        const paymentDueDate = new Date(request.dueDate);
+
+        if (request.paymentDay) {
+          paymentDueDate.setDate(request.paymentDay);
+        }
+
         const payment = Payment.create({
           policyId: policy.id.toString(),
           plot: '1/1',
           price: request.annualPremium,
           paymentStatus: EnumPaymentStatus.PENDING,
-          dueDate: new Date(request.dueDate),
+          dueDate: paymentDueDate,
         });
 
         payments.push(payment);

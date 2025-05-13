@@ -69,9 +69,12 @@ export class PrismaPaymentRepository implements PaymentRepository {
     if (data.paymentStatus !== undefined)
       updateData.paymentStatus = data.paymentStatus;
     if (data.price !== undefined) updateData.price = data.price;
-    if (data.dueDate !== undefined) updateData.dueDate = data.dueDate;
-    if (data.paymentDate !== undefined)
+    if (data.dueDate !== undefined) {
+      updateData.dueDate = data.dueDate;
+    }
+    if (data.paymentDate !== undefined) {
       updateData.paymentDate = data.paymentDate;
+    }
 
     updateData.updatedAt = new Date();
 
@@ -107,7 +110,6 @@ export class PrismaPaymentRepository implements PaymentRepository {
   }
 
   async findOverduePayments(): Promise<Payment[]> {
-
     const payments = await this.prisma.payment.findMany({
       where: {
         paymentStatus: EnumPaymentStatus.DEFEATED,
@@ -140,12 +142,12 @@ export class PrismaPaymentRepository implements PaymentRepository {
   async countAll(): Promise<number> {
     return this.prisma.payment.count();
   }
-  
+
   async countByStatus(status: EnumPaymentStatus): Promise<number> {
     return this.prisma.payment.count({
       where: { paymentStatus: status },
     });
-  }  
+  }
 
   async findByDueDateMonthAndYear(
     month: number,

@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common"
-import { PaymentRepository } from "../repositories/payment-repository"
+import { Injectable } from '@nestjs/common';
+import { PaymentRepository } from '../repositories/payment-repository';
 
 interface FindUpcomingPaymentsUseCaseRequest {
-  days?: number
+  days?: number;
 }
 
 @Injectable()
@@ -11,15 +11,14 @@ export class FindUpcomingPaymentsUseCase {
 
   async execute(request: FindUpcomingPaymentsUseCaseRequest = {}) {
     try {
-      const days = request.days || 10
+      const days = request.days || 10;
 
-      const payments = await this.paymentRepository.findUpcomingPayments(days)
+      const payments = await this.paymentRepository.findUpcomingPayments(days);
 
-      return { payments }
+      return { payments };
     } catch (error) {
-      console.error("Error in FindUpcomingPaymentsUseCase:", error)
-      throw error
+      console.error('Error in FindUpcomingPaymentsUseCase:', error);
+      throw error;
     }
   }
 }
-

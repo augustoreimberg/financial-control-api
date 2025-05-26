@@ -1,5 +1,5 @@
-import { Injectable } from "@nestjs/common"
-import { PaymentRepository } from "../repositories/payment-repository"
+import { Injectable } from '@nestjs/common';
+import { PaymentRepository } from '../repositories/payment-repository';
 
 @Injectable()
 export class FindOverduePaymentsUseCase {
@@ -7,13 +7,12 @@ export class FindOverduePaymentsUseCase {
 
   async execute() {
     try {
-      const payments = await this.paymentRepository.findOverduePayments()
+      const payments = await this.paymentRepository.findOverduePayments();
 
-      return { payments }
+      return { payments };
     } catch (error) {
-      console.error("Error in FindOverduePaymentsUseCase:", error)
-      throw error
+      console.error('Error in FindOverduePaymentsUseCase:', error);
+      throw error;
     }
   }
 }
-

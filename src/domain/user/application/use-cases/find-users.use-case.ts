@@ -1,4 +1,8 @@
-import { Injectable, Inject, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserRepository } from '../repositories/user-repository';
 import { EnumUserRole } from '@prisma/client';
 
@@ -11,7 +15,7 @@ interface FindUsersUseCaseRequest {
 
 @Injectable()
 export class FindUsersUseCase {
-    constructor( private userRepository: UserRepository) {}
+  constructor(private userRepository: UserRepository) {}
 
   async execute({ id, name, email, role }: FindUsersUseCaseRequest = {}) {
     try {

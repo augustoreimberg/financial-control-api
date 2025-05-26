@@ -1,6 +1,6 @@
-import { Public } from '@/infra/auth/public'
-import { Controller, Get } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { Public } from '@/infra/auth/public';
+import { Controller, Get } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Health')
 @Controller('/health')
@@ -13,6 +13,6 @@ export class HeatlhCheckController {
     return {
       status: true,
       message: 'Geisom is running',
-    }
+    };
   }
 }

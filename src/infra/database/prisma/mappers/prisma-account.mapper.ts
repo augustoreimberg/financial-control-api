@@ -1,6 +1,6 @@
 import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Account } from '@/domain/account/enterprise/entities/account.entity';
-import { Prisma, Account as PrismaAccount, UserAccount } from '@prisma/client';
+import { Prisma, Account as PrismaAccount } from '@prisma/client';
 
 export class PrismaAccountMapper {
   static toDomain(raw: PrismaAccount & { users?: { user: any }[] }): Account {

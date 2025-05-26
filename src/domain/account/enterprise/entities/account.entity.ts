@@ -3,10 +3,10 @@ import { UniqueEntityID } from '@/core/entities/unique-entity-id';
 import { Optional } from '@/core/optional';
 
 interface AccountProps {
-  name: String;
-  email: String;
-  sinacorCode: String;
-  accountNumber: String;
+  name: string;
+  email: string;
+  sinacorCode: string;
+  accountNumber: string;
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date;
@@ -17,7 +17,7 @@ export class Account extends Entity<AccountProps> {
   get name() {
     return this.props.name;
   }
-  set name(name: String) {
+  set name(name: string) {
     this.props.name = name;
     this.touch();
   }
@@ -25,7 +25,7 @@ export class Account extends Entity<AccountProps> {
   get email() {
     return this.props.email;
   }
-  set email(email: String) {
+  set email(email: string) {
     this.props.email = email;
     this.touch();
   }
@@ -33,7 +33,7 @@ export class Account extends Entity<AccountProps> {
   get sinacorCode() {
     return this.props.sinacorCode;
   }
-  set sinacorCode(sinacorCode: String) {
+  set sinacorCode(sinacorCode: string) {
     this.props.sinacorCode = sinacorCode;
     this.touch();
   }
@@ -41,7 +41,7 @@ export class Account extends Entity<AccountProps> {
   get accountNumber() {
     return this.props.accountNumber;
   }
-  set accountNumber(accountNumber: String) {
+  set accountNumber(accountNumber: string) {
     this.props.accountNumber = accountNumber;
     this.touch();
   }
@@ -67,7 +67,10 @@ export class Account extends Entity<AccountProps> {
   }
 
   public static create(
-    props: Optional<AccountProps, 'createdAt' | 'updatedAt' | 'deletedAt' | 'users'>,
+    props: Optional<
+      AccountProps,
+      'createdAt' | 'updatedAt' | 'deletedAt' | 'users'
+    >,
     id?: UniqueEntityID,
   ) {
     const account = new Account(

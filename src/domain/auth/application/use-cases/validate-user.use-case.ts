@@ -1,9 +1,9 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common"
-import { UserRepository } from "@/domain/user/application/repositories/user-repository"
-import { User } from "@/domain/user/enterprise/entities/user.entity"
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { UserRepository } from '@/domain/user/application/repositories/user-repository';
+import { User } from '@/domain/user/enterprise/entities/user.entity';
 
 interface ValidateUserUseCaseRequest {
-  userId: string
+  userId: string;
 }
 
 @Injectable()
@@ -12,16 +12,16 @@ export class ValidateUserUseCase {
 
   async execute({ userId }: ValidateUserUseCaseRequest): Promise<User> {
     try {
-      const user = await this.userRepository.findById(userId)
+      const user = await this.userRepository.findById(userId);
 
       if (!user) {
-        throw new UnauthorizedException("User not found.")
+        throw new UnauthorizedException('User not found.');
       }
 
-      return user
+      return user;
     } catch (error) {
-      console.error("Error in ValidateUserUseCase:", error)
-      throw error
+      console.error('Error in ValidateUserUseCase:', error);
+      throw error;
     }
   }
 }

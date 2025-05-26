@@ -1,20 +1,20 @@
-import { Body, Controller, Post } from "@nestjs/common"
-import { LoginUseCase } from "@/domain/auth/application/use-cases/login.use-case"
-import { Public } from "@/infra/auth/public"
-import { ApiTags } from "@nestjs/swagger"
+import { Body, Controller, Post } from '@nestjs/common';
+import { LoginUseCase } from '@/domain/auth/application/use-cases/login.use-case';
+import { Public } from '@/infra/auth/public';
+import { ApiTags } from '@nestjs/swagger';
 
 interface LoginBody {
-  email: string
-  password: string
+  email: string;
+  password: string;
 }
 
-@ApiTags("Auth")
-@Controller("auth")
+@ApiTags('Auth')
+@Controller('auth')
 export class LoginController {
   constructor(private loginUseCase: LoginUseCase) {}
 
   @Public()
-  @Post("login")
+  @Post('login')
   async login(@Body() body: LoginBody) {
     const { email, password } = body;
 
@@ -26,4 +26,3 @@ export class LoginController {
     return result;
   }
 }
-

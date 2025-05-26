@@ -31,13 +31,13 @@ export class PrismaUserMapper {
 
   static toHTTP(user: User) {
     return {
-        id: user.id.toString(),
-        name: user.name,
-        email: user.email,
-        password: user.password,
-        role: user.role,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
+      id: user.id.toString(),
+      name: user.name,
+      email: user.email,
+      password: user.password,
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
     };
   }
 }
